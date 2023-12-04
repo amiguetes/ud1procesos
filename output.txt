@@ -1,0 +1,5 @@
+total 12
+-rw-rw-r-- 1 arturo arturo    0 dic  4 16:41 output.txt
+-rw-rw-r-- 1 arturo arturo  755 dic  4 16:14 pom.xml
+drwxrwxr-x 4 arturo arturo 4096 dic  4 16:14 src
+drwxrwxr-x 4 arturo arturo 4096 dic  4 16:40 target
