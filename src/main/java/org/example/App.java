@@ -10,5 +10,6 @@ public class App
     {
         Piping piping = new Piping("ls -l".split(" "),"head -n5".split(" "));
         piping.start();
+
     }
 }

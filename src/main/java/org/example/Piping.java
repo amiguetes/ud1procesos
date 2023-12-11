@@ -11,6 +11,8 @@ public class Piping {
     // Nombre del archivo de salida donde se guardará la salida del segundo proceso.
     String outputFile;
 
+    int exitValueOfSecondProcess;
+
     /**
      * Constructor para crear un objeto Piping con dos comandos y un archivo de salida.
      * @param command1 El primer comando a ejecutar como array de String.
@@ -42,6 +44,15 @@ public class Piping {
     }
 
     /**
+     * Método para obtener el valor de salida del segundo proceso.
+     * @return El valor de salida del segundo proceso.
+     */
+    @Override
+    public String toString() {
+        return "El valor de salida de la ejecución es: <" + exitValueOfSecondProcess + ">";
+    }
+
+    /**
      * Método para iniciar el proceso de piping entre los dos comandos.
      */
     public void start() {
@@ -70,8 +81,11 @@ public class Piping {
             // Cierra el BufferedWriter para indicar el fin de la entrada del segundo proceso.
             p2bw.close();
 
+            // Espera a que el primer proceso termine.
+            p1.waitFor();
+
             // Espera a que el segundo proceso termine.
-            p2.waitFor();
+            exitValueOfSecondProcess = p2.waitFor();
 
             // BufferedReader para leer la salida del segundo proceso.
             InputStreamReader p2isr = new InputStreamReader(p2.getInputStream());
@@ -85,10 +99,9 @@ public class Piping {
             // Cierra el FileWriter.
             fileWriter.close();
 
-        } catch (IOException e) {
-            System.err.println(e);
-        } catch (InterruptedException e) {
-            System.err.println(e);
+        } catch (IOException|InterruptedException e) {
+            System.err.println("Error: " + e.getMessage());
         }
+
     }
 }
