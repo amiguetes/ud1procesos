@@ -1,6 +1,7 @@
 package org.example;
 
 import java.io.*;
+import java.util.Scanner;
 
 public class Piping {
 
@@ -22,6 +23,7 @@ public class Piping {
     public Piping(String[] command1, String[] command2, String outputFile){
         pbProcess1 = new ProcessBuilder(command1);
         pbProcess2 = new ProcessBuilder(command2);
+        pbProcess2.redirectOutput(new File(outputFile));
         this.outputFile = outputFile;
     }
 
@@ -55,31 +57,30 @@ public class Piping {
     /**
      * Método para iniciar el proceso de piping entre los dos comandos.
      */
-    public void start() {
-        try {
-            // Inicia los procesos según los ProcessBuilders.
-            Process p1 = pbProcess1.start();
-            Process p2 = pbProcess2.start();
+    public void start() throws IOException, InterruptedException{
 
-            // FileWriter para escribir en el archivo de salida.
-            FileWriter fileWriter = new FileWriter(outputFile);
+        // Inicia los procesos según los ProcessBuilders.
+        Process p1 = pbProcess1.start();
+        Process p2 = pbProcess2.start();
 
-            // BufferedReader para leer la salida del primer proceso.
-            InputStreamReader p1isr = new InputStreamReader(p1.getInputStream());
-            BufferedReader p1br = new BufferedReader(p1isr);
+        try (
 
-            // BufferedWriter para escribir en la entrada del segundo proceso.
-            OutputStreamWriter p2osw = new OutputStreamWriter(p2.getOutputStream());
-            BufferedWriter p2bw = new BufferedWriter(p2osw);
+
+             // Scanner para leer la salida del primer proceso.
+             Scanner sc = new Scanner(p1.getInputStream());
+
+             // PrintWriter para escribir en la entrada del segundo proceso.
+             PrintWriter p2w = new PrintWriter(p2.getOutputStream(),true);
+        ){
 
             // Lee la salida del primer proceso y la escribe en la entrada del segundo.
-            String line = "";
-            while ((line = p1br.readLine()) != null){
-                p2bw.write(line + "\n");
+
+            while (sc.hasNextLine()){
+                p2w.println(sc.nextLine());
             }
 
             // Cierra el BufferedWriter para indicar el fin de la entrada del segundo proceso.
-            p2bw.close();
+
 
             // Espera a que el primer proceso termine.
             p1.waitFor();
@@ -87,20 +88,9 @@ public class Piping {
             // Espera a que el segundo proceso termine.
             exitValueOfSecondProcess = p2.waitFor();
 
-            // BufferedReader para leer la salida del segundo proceso.
-            InputStreamReader p2isr = new InputStreamReader(p2.getInputStream());
-            BufferedReader p2br = new BufferedReader(p2isr);
 
-            // Escribe la salida del segundo proceso en el archivo de salida.
-            while ((line = p2br.readLine()) != null){
-                fileWriter.write(line + "\n");
-            }
-
-            // Cierra el FileWriter.
-            fileWriter.close();
-
-        } catch (IOException|InterruptedException e) {
-            System.err.println("Error: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw e;
         }
 
     }
