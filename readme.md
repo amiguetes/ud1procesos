@@ -36,4 +36,4 @@ Las contribuciones al proyecto son bienvenidas. Por favor, asegúrate de seguir 
 
 ## Licencia
 
-Este proyecto se distribuye bajo la licencia [incluir tipo de licencia], lo que permite la reutilización y distribución con ciertas condiciones.
+Este proyecto se distribuye bajo la licencia [MIT](./license.txt), lo que permite la reutilización y distribución con ciertas condiciones.
